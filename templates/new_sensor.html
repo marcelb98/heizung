@@ -1,0 +1,43 @@
+{% extends "_base.html" %}
+{% set title='New sensor' %}
+{% set heading='Configure new sensor' %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Sensors</li>
+        <li class="active">New</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.name.label }}
+            {% if form.name.errors %}<br><span class="text-danger">{{ form.name.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.name(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.address1w.label }}
+            {% if form.address1w.errors %}<br><span class="text-danger">{{ form.address1w.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.address1w(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}

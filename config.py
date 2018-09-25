@@ -17,3 +17,10 @@ class Hardware:
         7: 38,
         8: 40
     }
+
+class System:
+    """ Configuration regarding the (operating) system """
+
+    # Direction with 1-wire devices
+    # on Raspbian usually  /sys/bus/w1/devices
+    dir_1w = '/home/marcel/w1/devices'

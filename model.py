@@ -38,6 +38,9 @@ class Sensor(db.Model):
     address1w = db.Column(db.String, nullable=False) # 1-wire-address
     name = db.Column(db.String, nullable=False)
 
+    def __init__(self, address1w, name):
+        self.address1w = address1w
+        self.name = name
 
 class Relay(db.Model):
     __tablename__ = 'relay'

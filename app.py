@@ -7,7 +7,7 @@ import model
 from config import Config
 import forms
 
-from lib.sensors import get_sensors
+from lib.sensors import get_sensors, get_unused_1waddresses
 from lib.relays import get_relays, get_unused_ports
 
 def create_app():
@@ -61,10 +61,20 @@ def dashboard():
 def sensor(sensorID):
     return "sensor"
 
-@app.route('/sensor/new')
+@app.route('/sensor/new', methods=['GET', 'POST'])
 @with_navigation
 def new_sensor():
-    return "new sensor"
+    form = forms.NewSensorForm(request.form)
+    form.address1w.choices = [(addr, addr) for addr in get_unused_1waddresses()]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        sensor = model.Sensor(form.address1w.data, form.name.data)
+        model.db.session.add(sensor)
+        model.db.session.commit()
+        flash('Sensor created successfully.')
+
+    return render_template('new_sensor.html', form=form)
 
 @app.route('/relay/<int:relayID>/')
 @with_navigation
