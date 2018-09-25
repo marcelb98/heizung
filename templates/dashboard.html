@@ -10,39 +10,24 @@
 {% endblock %}
 
 {% block content %}
-<!-- Small boxes (Stat box) -->
+<!-- Small boxes (Relay status box) -->
       <div class="row">
 
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-green">
-            <div class="inner">
-              <h3>On</h3>
+        {% for relay in relays %}
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box {{ 'bg-green' if relay.on else 'bg-red' }}">
+                    <div class="inner">
+                        <h3>{{ 'On' if relay.on else 'Off' }}</h3>
+                        <p>{{ relay.name }}</p>
+                    </div>
+                    <div class="icon">
+                        {{ relay.port }}
+                    </div>
+                    <a href="{{ url_for('relay', relayID=relay.id) }}" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        {% endfor %}
 
-              <p>Relay 1</p>
-            </div>
-            <div class="icon">
-              1
-            </div>
-            <a href="#" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
-        <!-- ./col -->
-
-        <div class="col-lg-3 col-xs-6">
-          <!-- small box -->
-          <div class="small-box bg-red">
-            <div class="inner">
-              <h3>Off</h3>
-
-              <p>Relay 4</p>
-            </div>
-            <div class="icon">
-              4
-            </div>
-            <a href="#" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
-          </div>
-        </div>
         <!-- ./col -->
       </div>
       <!-- /.row -->

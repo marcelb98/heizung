@@ -1,0 +1,43 @@
+{% extends "_base.html" %}
+{% set title='New relay' %}
+{% set heading='Configure new relay' %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Relays</li>
+        <li class="active">New</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.name.label }}
+            {% if form.name.errors %}<br><span class="text-danger">{{ form.name.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.name(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.port.label }}
+            {% if form.port.errors %}<br><span class="text-danger">{{ form.port.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.port(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}

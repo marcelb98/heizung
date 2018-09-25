@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import enum
@@ -37,8 +38,6 @@ class Sensor(db.Model):
     address1w = db.Column(db.String, nullable=False) # 1-wire-address
     name = db.Column(db.String, nullable=False)
 
-    conditions_sensorCompare = db.relationship('Condition_sensorCompare')
-    conditions_valueCompare = db.relationship('Condition_valueCompare')
 
 class Relay(db.Model):
     __tablename__ = 'relay'
@@ -46,6 +45,15 @@ class Relay(db.Model):
     port = db.Column(db.Integer, nullable=False) # No. of relay on relay-card
     name = db.Column(db.String, nullable=False)
     rules = db.relationship('Rule')
+
+    def __init__(self, port, name):
+        self.port = port
+        self.name = name
+
+    @hybrid_property
+    def on(self):
+        # return True if relay is on, False otherwise
+        return False
 
 class Rule(db.Model):
     __tablename__ = 'rule'

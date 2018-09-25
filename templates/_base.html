@@ -69,51 +69,25 @@
     <section class="sidebar">
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
-        <li class="active">
-          <a href="#">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>Sensors</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Sensor 1</a></li>
-            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Sensor 2</a></li>
-          </ul>
-        </li>
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-pie-chart"></i>
-            <span>Relays</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> Relay 1</a></li>
-            <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Relay 2</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="pages/calendar.html">
-            <i class="fa fa-calendar"></i> <span>User administration</span>
-          </a>
-        </li>
-        <li>
-          <a href="pages/calendar.html">
-            <i class="fa fa-calendar"></i> <span>Logout</span>
-          </a>
-        </li>
-
+          {% for item in nav.main %}
+            <li class="{{ 'active' if item.is_active else '' }} {{ 'treeview' if item.items else '' }}">
+                <a href="{{ item.url }}">
+                    <i class="fa fa-dashboard"></i> <span>{{ item.label }}</span>
+                    {% if item.items %}
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    {% endif %}
+                </a>
+                {% if item.items %}
+                    <ul class="treeview-menu">
+                        {% for child in item.items %}
+                        <li class="{{ 'active' if child.is_active else '' }}"><a href="{{ child.url }}"><i class="fa fa-circle-o"></i> {{ child.label }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+          {% endfor %}
       </ul>
     </section>
     <!-- /.sidebar -->
@@ -130,10 +104,23 @@
 
     <!-- Main content -->
     <section class="content">
+        <!-- flash messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="icon fa fa-info"></i> {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <!-- /flash messages -->
         {% block content %}
         {% endblock %}
     </section>
     <!-- /.content -->
+
   </div>
   <!-- /.content-wrapper -->
   <footer class="main-footer">
@@ -151,6 +138,7 @@
 
   </aside>
   <!-- /.control-sidebar -->
+
   <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
   <div class="control-sidebar-bg"></div>
