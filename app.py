@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_navigation import Navigation
 
@@ -22,40 +24,55 @@ with app.app_context():
     model.db.init_app(app)
 
 nav = Navigation(app)
-nav.Bar('main', [
-    nav.Item('Dashboard', 'dashboard'),
-    nav.Item('Sensors', 'index', items=[nav.Item(s.name, 'sensor', {'sensorID': s.id}) for s in get_sensors()]+
-        [nav.Item('anlegen', 'new_sensor')]
-    ),
-    nav.Item('Relays', 'index', items=[nav.Item(r.name, 'relay', {'relayID': r.id}) for r in get_relays()] +
-        [nav.Item('anlegen', 'new_relay')]
-    ),
-    nav.Item('User administration', 'user_administration'),
-    nav.Item('Logout', 'logout'),
-])
+def gen_nav():
+    nav.Bar('main', [
+        nav.Item('Dashboard', 'dashboard'),
+        nav.Item('Sensors', 'index', items=[nav.Item(s.name, 'sensor', {'sensorID': s.id}) for s in get_sensors()]+
+            [nav.Item('anlegen', 'new_sensor')]
+        ),
+        nav.Item('Relays', 'index', items=[nav.Item(r.name, 'relay', {'relayID': r.id}) for r in get_relays()] +
+            [nav.Item('anlegen', 'new_relay')]
+        ),
+        nav.Item('User administration', 'user_administration'),
+        nav.Item('Logout', 'logout'),
+    ])
+
+# decorator for views which need navigation (this is needed to update the navigation without restarting flask)
+def with_navigation(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        gen_nav()
+        return func(*args, **kwargs)
+
+    return decorated_function
 
 @app.route('/')
 def index():
     return redirect(url_for('dashboard'))
 
 @app.route('/dashboard/')
+@with_navigation
 def dashboard():
     relays = get_relays()
     return render_template('dashboard.html', relays=relays)
 
 @app.route('/sensor/<int:sensorID>/')
+@with_navigation
 def sensor(sensorID):
     return "sensor"
 
 @app.route('/sensor/new')
+@with_navigation
 def new_sensor():
     return "new sensor"
 
 @app.route('/relay/<int:relayID>/')
+@with_navigation
 def relay(relayID):
     return "relay"
 
 @app.route('/relay/new', methods=['GET', 'POST'])
+@with_navigation
 def new_relay():
     form = forms.NewRelayForm(request.form)
     form.port.choices = [(nr, 'Port {}'.format(nr)) for nr in get_unused_ports()]
@@ -70,6 +87,7 @@ def new_relay():
     return render_template('new_relay.html', form=form)
 
 @app.route('/admin/users/')
+@with_navigation
 def user_administration():
     return "user administration"
 
