@@ -1,3 +1,5 @@
+import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -61,6 +63,18 @@ class Sensor(db.Model):
     def __init__(self, address1w, name):
         self.address1w = address1w
         self.name = name
+
+class SensorValue(db.Model):
+    __tablename__ = 'sensorValue'
+    id = db.Column(db.Integer, primary_key=True)
+    sensor_id = db.Column(db.Integer, db.ForeignKey('sensor.id'), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    time = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, sensor, value):
+        self.sensor_id = sensor.id
+        self.time = datetime.datetime.now()
+        self.value = value
 
 class Relay(db.Model):
     __tablename__ = 'relay'
