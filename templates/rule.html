@@ -30,7 +30,9 @@
         <div class="col-md-1">
             <a href="{{ url_for('new_sensor_compare_condition', ruleID=rule.id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Compare two sensors</a><br>
             <br>
-            <a href="#" class="btn btn-primary"><i class="fa fa-plus"></i> Compare sensor with value</a><br>
+            <a href="{{ url_for('new_value_compare_condition', ruleID=rule.id) }}" class="btn btn-primary"><i class="fa fa-plus"></i> Compare sensor with value</a><br>
+            <br>
+            <a href="{{ url_for('delete_rule', ruleID=rule.id) }}" class="btn btn-danger"><i class="fa fa-trash"></i> Delete rule</a><br>
         </div>
     </div>
 

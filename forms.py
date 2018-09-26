@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, FloatField
 from wtforms.validators import DataRequired, ValidationError
 
 from model import Relay, Sensor
@@ -40,3 +40,12 @@ class NewSensorConditionForm(FlaskForm):
     sensor1 = SelectField('Sensor 1', validators=[DataRequired(message="No sensor 1 specified")], coerce=int)
     relation = SelectField('Relation', validators=[DataRequired(message="No relation specified")], coerce=int)
     sensor2 = SelectField('Sensor 2', validators=[DataRequired(message="No sensor 2 specified")], coerce=int)
+
+    # verify sensors and relation
+
+class NewValueConditionForm(FlaskForm):
+    sensor = SelectField('Sensor', validators=[DataRequired(message="No sensor specified")], coerce=int)
+    relation = SelectField('Relation', validators=[DataRequired(message="No relation specified")], coerce=int)
+    value = FloatField('Value', validators=[DataRequired(message="No value specified")], default=0)
+
+    # verify sensor and relation

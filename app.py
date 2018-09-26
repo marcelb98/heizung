@@ -143,7 +143,34 @@ def new_sensor_compare_condition(ruleID):
         flash('Condition created successfully.')
         return redirect(url_for('rule', ruleID=rule.id))
 
-    return render_template('new_condition.html', rule=rule, form=form)
+    return render_template('new_sensorCondition.html', rule=rule, form=form)
+
+@app.route('/rule/<int:ruleID>/newValueCondition', methods=['GET', 'POST'])
+@with_navigation
+def new_value_compare_condition(ruleID):
+    rule = model.Rule.query.get(ruleID)
+
+    form = forms.NewValueConditionForm(request.form)
+    form.sensor.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+    form.relation.choices = [(r.value, str(r)) for r in model.RELATIONS]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        form.relation.data = model.RELATIONS(form.relation.data)
+        c = model.Condition_valueCompare(rule.id, form.sensor.data, form.value.data, form.relation.data)
+        model.db.session.add(c)
+        model.db.session.commit()
+        flash('Condition created successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_valueCondition.html', rule=rule, form=form)
+
+@app.route('/rule/<int:ruleID>/delete', methods=['GET', 'POST'])
+def delete_rule(ruleID):
+    rule = model.Rule.query.get(ruleID)
+    model.db.session.delete(rule)
+    model.db.session.commit()
+    return redirect(url_for('index'))
 
 @app.route('/admin/users/')
 @with_navigation

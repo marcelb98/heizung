@@ -90,7 +90,7 @@ class Rule(db.Model):
     name = db.Column(db.String, nullable=False)
     op = db.Column(db.Enum(OPERATORS), nullable=False)
     conditions_sensorCompare = db.relationship("Condition_sensorCompare")
-    conditions_valueCompare = db.relationship("Condtion_valueCompare")
+    conditions_valueCompare = db.relationship("Condition_valueCompare")
 
     childs = db.relationship('Rule') # rules which act as condition for this rule
 
@@ -134,7 +134,7 @@ class Condition_sensorCompare(db.Model):
             s2=Sensor.query.filter_by(id=self.sensor2).first().name
         )
 
-class Condtion_valueCompare(db.Model):
+class Condition_valueCompare(db.Model):
     __tablename__ = 'condition_valueCompare'
     # condtion is true, if:
     # sensor1.value RELATION value is True
@@ -143,3 +143,16 @@ class Condtion_valueCompare(db.Model):
     relation = db.Column(db.Enum(RELATIONS), nullable=False)
     sensor = db.Column(db.Integer, db.ForeignKey('sensor.id'))
     value = db.Column(db.Float, nullable=False)
+
+    def __init__(self, rule, sensor, value, relation):
+        self.rule = rule
+        self.sensor = sensor
+        self.value = value
+        self.relation = relation
+
+    def __str__(self):
+        return '{s1} {op} {v}'.format(
+            s1=Sensor.query.filter_by(id=self.sensor).first().name,
+            op=str(self.relation),
+            v=str(self.value)
+        )
