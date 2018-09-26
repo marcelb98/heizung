@@ -103,7 +103,9 @@ def new_relay():
 @app.route('/rule/<int:ruleID>/')
 @with_navigation
 def rule(ruleID):
-    return "rule"
+    rule = model.Rule.query.get(ruleID)
+
+    return render_template('rule.html', rule=rule)
 
 @app.route('/rule/new', methods=['GET', 'POST'])
 @with_navigation
@@ -121,6 +123,27 @@ def new_rule():
         return redirect(url_for('rule', ruleID=rule.id))
 
     return render_template('new_rule.html', form=form)
+
+@app.route('/rule/<int:ruleID>/newSensorCondition', methods=['GET', 'POST'])
+@with_navigation
+def new_sensor_compare_condition(ruleID):
+    rule = model.Rule.query.get(ruleID)
+
+    form = forms.NewSensorConditionForm(request.form)
+    form.sensor1.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+    form.relation.choices = [(r.value, str(r)) for r in model.RELATIONS]
+    form.sensor2.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        form.relation.data = model.RELATIONS(form.relation.data)
+        c = model.Condition_sensorCompare(rule.id, form.sensor1.data, form.sensor2.data, form.relation.data)
+        model.db.session.add(c)
+        model.db.session.commit()
+        flash('Condition created successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_condition.html', rule=rule, form=form)
 
 @app.route('/admin/users/')
 @with_navigation

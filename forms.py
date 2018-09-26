@@ -35,3 +35,8 @@ class NewRelayForm(FlaskForm):
 class NewRuleForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(message="No name given")])
     op = SelectField('Operation', validators=[DataRequired(message="No operation specified")], coerce=int)
+
+class NewSensorConditionForm(FlaskForm):
+    sensor1 = SelectField('Sensor 1', validators=[DataRequired(message="No sensor 1 specified")], coerce=int)
+    relation = SelectField('Relation', validators=[DataRequired(message="No relation specified")], coerce=int)
+    sensor2 = SelectField('Sensor 2', validators=[DataRequired(message="No sensor 2 specified")], coerce=int)

@@ -25,6 +25,18 @@ class RELATIONS(Enum):
     geq = 4 # greater or equal
     gt = 5  # greater then
 
+    def __str__(self):
+        if self is RELATIONS.lt:
+            return "<"
+        elif self is RELATIONS.leq:
+            return "<="
+        elif self is RELATIONS.eq:
+            return "=="
+        elif self is RELATIONS.geq:
+            return ">="
+        elif self is RELATIONS.gt:
+            return ">"
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -88,6 +100,10 @@ class Rule(db.Model):
         self.name = name
         self.op = operation
 
+    @hybrid_property
+    def conditions(self):
+        return self.conditions_sensorCompare + self.conditions_valueCompare
+
 class RelayRules(db.Model):
     __tablename__ = 'relayRules'
     # Links relays with rules
@@ -104,6 +120,19 @@ class Condition_sensorCompare(db.Model):
     relation = db.Column(db.Enum(RELATIONS), nullable=False)
     sensor1 = db.Column(db.Integer, db.ForeignKey('sensor.id'))
     sensor2 = db.Column(db.Integer, db.ForeignKey('sensor.id'))
+
+    def __init__(self, rule, sensor1, sensor2, relation):
+        self.rule = rule
+        self.sensor1 = sensor1
+        self.sensor2 = sensor2
+        self.relation = relation
+
+    def __str__(self):
+        return '{s1} {op} {s2}'.format(
+            s1=Sensor.query.filter_by(id=self.sensor1).first().name,
+            op=str(self.relation),
+            s2=Sensor.query.filter_by(id=self.sensor2).first().name
+        )
 
 class Condtion_valueCompare(db.Model):
     __tablename__ = 'condition_valueCompare'

@@ -1,0 +1,49 @@
+{% extends "_base.html" %}
+{% set title='New condition' %}
+{% set heading='Create new condition' %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Rules</li>
+        <li>{{ rule.name }}</li>
+        <li class="active">New condition</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.sensor1.label }}
+            {% if form.sensor1.errors %}<br><span class="text-danger">{{ form.sensor1.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.relation.label }}
+            {% if form.relation.errors %}<br><span class="text-danger">{{ form.relation.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.sensor2.label }}
+            {% if form.sensor2.errors %}<br><span class="text-danger">{{ form.sensor2.errors[0] }}</span>{% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.sensor1(class_="form-control") }}
+        </div>
+        <div class="col-md-4">
+            {{ form.relation(class_="form-control") }}
+        </div>
+        <div class="col-md-4">
+            {{ form.sensor2(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}
