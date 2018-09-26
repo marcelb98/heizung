@@ -1,0 +1,43 @@
+{% extends "_base.html" %}
+{% set title='New rule' %}
+{% set heading='Create new rule' %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Rules</li>
+        <li class="active">New</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.name.label }}
+            {% if form.name.errors %}<br><span class="text-danger">{{ form.name.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.name(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.op.label }}
+            {% if form.op.errors %}<br><span class="text-danger">{{ form.op.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.op(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}

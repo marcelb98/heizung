@@ -2,15 +2,23 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
-import enum
+from enum import Enum, unique
 
 db = SQLAlchemy()
 
-class OPERATORS(enum.Enum):
+@unique
+class OPERATORS(Enum):
     and_ = 1
     or_ = 2
 
-class RELATIONS(enum.Enum):
+    def __str__(self):
+        if self is OPERATORS.and_:
+            return "and"
+        elif self is OPERATORS.or_:
+            return "or"
+
+@unique
+class RELATIONS(Enum):
     lt = 1  # less then
     leq = 2 # less or equal
     eq = 3  # equals
@@ -47,7 +55,8 @@ class Relay(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     port = db.Column(db.Integer, nullable=False) # No. of relay on relay-card
     name = db.Column(db.String, nullable=False)
-    rules = db.relationship('Rule')
+
+    relayrules = db.relationship('RelayRules')
 
     def __init__(self, port, name):
         self.port = port
@@ -65,13 +74,26 @@ class Rule(db.Model):
     # relays will be switched.
     # Rules where parentRule is not None are acting as conditions.
     id = db.Column(db.Integer, primary_key=True)
-    parent_relay = db.Column(db.Integer, db.ForeignKey('rule.id'), nullable=True)
+    parent_rule = db.Column(db.Integer, db.ForeignKey('rule.id'), nullable=True)
     name = db.Column(db.String, nullable=False)
     op = db.Column(db.Enum(OPERATORS), nullable=False)
-    relay = db.Column(db.Integer, db.ForeignKey('relay.id'))
     conditions_sensorCompare = db.relationship("Condition_sensorCompare")
+    conditions_valueCompare = db.relationship("Condtion_valueCompare")
 
     childs = db.relationship('Rule') # rules which act as condition for this rule
+
+    relayrules = db.relationship('RelayRules')
+
+    def __init__(self, name, operation):
+        self.name = name
+        self.op = operation
+
+class RelayRules(db.Model):
+    __tablename__ = 'relayRules'
+    # Links relays with rules
+    id = db.Column(db.Integer, primary_key=True)
+    relay = db.Column(db.Integer, db.ForeignKey('relay.id'))
+    rule = db.Column(db.Integer, db.ForeignKey('rule.id'))
 
 class Condition_sensorCompare(db.Model):
     __tablename__ = 'condition_sensorCompare'

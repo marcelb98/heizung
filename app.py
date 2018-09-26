@@ -9,6 +9,7 @@ import forms
 
 from lib.sensors import get_sensors, get_unused_1waddresses
 from lib.relays import get_relays, get_unused_ports
+from lib.rules import get_rules
 
 def create_app():
     app = Flask('heizung')
@@ -28,10 +29,13 @@ def gen_nav():
     nav.Bar('main', [
         nav.Item('Dashboard', 'dashboard'),
         nav.Item('Sensors', 'index', items=[nav.Item(s.name, 'sensor', {'sensorID': s.id}) for s in get_sensors()]+
-            [nav.Item('anlegen', 'new_sensor')]
+            [nav.Item('+ new', 'new_sensor')]
         ),
         nav.Item('Relays', 'index', items=[nav.Item(r.name, 'relay', {'relayID': r.id}) for r in get_relays()] +
-            [nav.Item('anlegen', 'new_relay')]
+            [nav.Item('+ new', 'new_relay')]
+        ),
+        nav.Item('Rules', 'index', items=[nav.Item(r.name, 'rule', {'ruleID': r.id}) for r in get_rules()] +
+            [nav.Item('+ new', 'new_rule')]
         ),
         nav.Item('User administration', 'user_administration'),
         nav.Item('Logout', 'logout'),
@@ -95,6 +99,28 @@ def new_relay():
         flash('Relay created successfully.')
 
     return render_template('new_relay.html', form=form)
+
+@app.route('/rule/<int:ruleID>/')
+@with_navigation
+def rule(ruleID):
+    return "rule"
+
+@app.route('/rule/new', methods=['GET', 'POST'])
+@with_navigation
+def new_rule():
+    form = forms.NewRuleForm(request.form)
+    form.op.choices = [(op.value, str(op)) for op in model.OPERATORS]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        form.op.data = model.OPERATORS(form.op.data)
+        rule = model.Rule(form.name.data, form.op.data)
+        model.db.session.add(rule)
+        model.db.session.commit()
+        flash('Rule created successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_rule.html', form=form)
 
 @app.route('/admin/users/')
 @with_navigation

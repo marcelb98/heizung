@@ -31,3 +31,7 @@ class NewRelayForm(FlaskForm):
         relays = Relay.query.filter_by(port=field.data).first()
         if relays is not None:
             raise ValidationError("Port is already configured.")
+
+class NewRuleForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(message="No name given")])
+    op = SelectField('Operation', validators=[DataRequired(message="No operation specified")], coerce=int)
