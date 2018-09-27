@@ -8,7 +8,7 @@ from config import Config
 import forms
 
 from lib.sensors import get_sensors, get_unused_1waddresses
-from lib.relays import get_relays, get_unused_ports
+from lib.relays import get_relays, get_unused_ports, get_unused_rules_for_relay
 from lib.rules import get_rules
 
 def create_app():
@@ -82,10 +82,24 @@ def new_sensor():
 
     return render_template('new_sensor.html', form=form)
 
-@app.route('/relay/<int:relayID>/')
+@app.route('/relay/<int:relayID>/', methods=['GET', 'POST'])
 @with_navigation
 def relay(relayID):
-    return "relay"
+    relay = model.Relay.query.get(relayID)
+
+    form = forms.NewRuleForRelayForm(request.form)
+    form.rule.choices = [(r.id, r.name) for r in get_unused_rules_for_relay(relay.id)]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        relayrule = model.RelayRules(relay.id, form.rule.data)
+        model.db.session.add(relayrule)
+        model.db.session.commit()
+        flash('Rule linked successfully.')
+
+    rules = [model.Rule.query.get(rr.rule) for rr in model.RelayRules.query.all()]
+
+    return render_template('relay.html', relay=relay, form=form, rules=rules)
 
 @app.route('/relay/new', methods=['GET', 'POST'])
 @with_navigation

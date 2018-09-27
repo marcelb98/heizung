@@ -146,6 +146,10 @@ class RelayRules(db.Model):
     relay = db.Column(db.Integer, db.ForeignKey('relay.id'))
     rule = db.Column(db.Integer, db.ForeignKey('rule.id'))
 
+    def __init__(self, relayID, ruleID):
+        self.relay = relayID
+        self.rule = ruleID
+
 class Condition_sensorCompare(db.Model):
     __tablename__ = 'condition_sensorCompare'
     # condtion is true, if:

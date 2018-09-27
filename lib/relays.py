@@ -2,7 +2,7 @@
 Lib for relays
 """
 
-from model import Relay
+from model import Relay, Rule, RelayRules
 from config import Hardware
 
 def get_relays():
@@ -14,3 +14,10 @@ def get_unused_ports():
         if Relay.query.filter_by(port=nr).first() is None:
             ports.append(nr)
     return ports
+
+def get_unused_rules_for_relay(relayID):
+    # get all rules which are not linked with this relay
+
+    # TODO: return only unlinked rules, actually it returns all rules
+
+    return Rule.query.all()

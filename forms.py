@@ -57,3 +57,8 @@ class NewValueConditionForm(FlaskForm):
     value = FloatField('Value', validators=[DataRequired(message="No value specified")], default=0)
 
     # verify sensor and relation
+
+class NewRuleForRelayForm(FlaskForm):
+    rule = SelectField('Rule', validators=[DataRequired(message="No rule specified")], coerce=int)
+
+    # verify rule
