@@ -43,6 +43,14 @@ class NewSensorConditionForm(FlaskForm):
 
     # verify sensors and relation
 
+class NewSensorDiffConditionForm(FlaskForm):
+    sensor1 = SelectField('Sensor 1', validators=[DataRequired(message="No sensor 1 specified")], coerce=int)
+    relation = SelectField('Relation', validators=[DataRequired(message="No relation specified")], coerce=int)
+    sensor2 = SelectField('Sensor 2', validators=[DataRequired(message="No sensor 2 specified")], coerce=int)
+    value = FloatField('Value', validators=[DataRequired(message="No value specified")], default=0)
+
+    # verify sensors and relation
+
 class NewValueConditionForm(FlaskForm):
     sensor = SelectField('Sensor', validators=[DataRequired(message="No sensor specified")], coerce=int)
     relation = SelectField('Relation', validators=[DataRequired(message="No relation specified")], coerce=int)

@@ -104,6 +104,7 @@ class Rule(db.Model):
     name = db.Column(db.String, nullable=False)
     op = db.Column(db.Enum(OPERATORS), nullable=False)
     conditions_sensorCompare = db.relationship("Condition_sensorCompare")
+    conditions_sensorDiffCompare = db.relation("Condition_sensorDiffCompare")
     conditions_valueCompare = db.relationship("Condition_valueCompare")
 
     childs = db.relationship('Rule') # rules which act as condition for this rule
@@ -116,7 +117,7 @@ class Rule(db.Model):
 
     @hybrid_property
     def conditions(self):
-        return self.conditions_sensorCompare + self.conditions_valueCompare
+        return self.conditions_sensorCompare + self.conditions_sensorDiffCompare + self.conditions_valueCompare
 
 class RelayRules(db.Model):
     __tablename__ = 'relayRules'
@@ -146,6 +147,32 @@ class Condition_sensorCompare(db.Model):
             s1=Sensor.query.filter_by(id=self.sensor1).first().name,
             op=str(self.relation),
             s2=Sensor.query.filter_by(id=self.sensor2).first().name
+        )
+
+class Condition_sensorDiffCompare(db.Model):
+    __tablename__ = 'condition_sensorDiffCompare'
+    # condition is true, if:
+    # sensor2.value - sensor1.value RELATION value is True
+    id = db.Column(db.Integer, primary_key=True)
+    rule = db.Column(db.Integer, db.ForeignKey('rule.id'))
+    relation = db.Column(db.Enum(RELATIONS), nullable=False)
+    sensor1 = db.Column(db.Integer, db.ForeignKey('sensor.id'))
+    sensor2 = db.Column(db.Integer, db.ForeignKey('sensor.id'))
+    value = db.Column(db.Float, nullable=False)
+
+    def __init__(self, rule, sensor1, sensor2, value, relation):
+        self.rule = rule
+        self.sensor1 = sensor1
+        self.sensor2 = sensor2
+        self.value = value
+        self.relation = relation
+
+    def __str__(self):
+        return '({s2} - {s1}) {op} {v}'.format(
+            s1=Sensor.query.filter_by(id=self.sensor1).first().name,
+            op=str(self.relation),
+            s2=Sensor.query.filter_by(id=self.sensor2).first().name,
+            v=str(self.value)
         )
 
 class Condition_valueCompare(db.Model):

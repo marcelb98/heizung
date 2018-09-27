@@ -145,6 +145,27 @@ def new_sensor_compare_condition(ruleID):
 
     return render_template('new_sensorCondition.html', rule=rule, form=form)
 
+@app.route('/rule/<int:ruleID>/newSensorDiffCondition', methods=['GET', 'POST'])
+@with_navigation
+def new_sensor_diff_condition(ruleID):
+    rule = model.Rule.query.get(ruleID)
+
+    form = forms.NewSensorDiffConditionForm(request.form)
+    form.sensor1.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+    form.relation.choices = [(r.value, str(r)) for r in model.RELATIONS]
+    form.sensor2.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        form.relation.data = model.RELATIONS(form.relation.data)
+        c = model.Condition_sensorDiffCompare(rule.id, form.sensor1.data, form.sensor2.data, form.value.data, form.relation.data)
+        model.db.session.add(c)
+        model.db.session.commit()
+        flash('Condition created successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_sensorDiffCondition.html', rule=rule, form=form)
+
 @app.route('/rule/<int:ruleID>/newValueCondition', methods=['GET', 'POST'])
 @with_navigation
 def new_value_compare_condition(ruleID):
