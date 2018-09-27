@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% set title='Sensor' %}
+{% set heading=sensor.name %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Sensors</li>
+        <li class="active">{{ sensor.name }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <b>Current value:</b> {{ sensor.value }}&deg;C
+        </div>
+        <div class="col-md-1">
+            <a href="#" class="btn btn-danger" disabled title="Not implemented yet"><i class="fa fa-trash"></i> Delete sensor</a><br>
+        </div>
+    </div>
+
+{% endblock %}

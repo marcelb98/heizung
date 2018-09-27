@@ -63,7 +63,9 @@ def dashboard():
 @app.route('/sensor/<int:sensorID>/')
 @with_navigation
 def sensor(sensorID):
-    return "sensor"
+    sensor = model.Sensor.query.get(sensorID)
+
+    return render_template('sensor.html', sensor=sensor)
 
 @app.route('/sensor/new', methods=['GET', 'POST'])
 @with_navigation
