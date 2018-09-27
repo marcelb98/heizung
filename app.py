@@ -181,11 +181,6 @@ def user_administration():
 def logout():
     return "logout"
 
-@app.route('/init/')
-def init():
-    model.db.create_all()
-    return "a"
-
 
 if __name__ == '__main__':
     app.run()
