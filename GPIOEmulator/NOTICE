@@ -1,0 +1,4 @@
+GPIOEmulator / EmulatorGUI
+
+The used emulator for the Raspberry Pi GPIO is: https://sourceforge.net/projects/pi-gpio-emulator/
+which is licensed under Creative Commons Attribution License and Copyright vellarod (https://sourceforge.net/u/vellarod/profile/).
