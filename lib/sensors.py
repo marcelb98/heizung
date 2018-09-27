@@ -17,7 +17,6 @@ def get_all_1waddresses():
             addresses.append(dir)
     return addresses
 
-
 def get_unused_1waddresses():
     addresses = []
     for addr in get_all_1waddresses():

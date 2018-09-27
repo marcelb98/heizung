@@ -12,7 +12,11 @@
 
 {% block content %}
     <div class="row">
-
+        <div class="col-md-12">
+         This rule is currently <span class="badge {{ 'badge-success' if rule.fulfilled else 'badge-danger' }}">
+            {{ 'True' if rule.fulfilled else 'False' }}
+        </span>.
+        </div>
     </div>
     <div class="row">
         <div class="col-md-6">
@@ -20,7 +24,7 @@
             {% if rule.conditions %}
                 <ul>
                 {% for condition in rule.conditions %}
-                    <li>{% if loop.index > 1 %}<b>{{ rule.op}}</b> {% endif %}{{ condition }}</li>
+                    <li class="{{ 'text-success' if condition.fulfilled else 'text-danger' }}">{% if loop.index > 1 %}<b>{{ rule.op}}</b> {% endif %}{{ condition }}</li>
                 {% endfor %}
                 </ul>
             {% else %}

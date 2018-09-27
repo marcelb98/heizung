@@ -5,6 +5,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from enum import Enum, unique
+from lib.hardware import get_sensor_value
 
 db = SQLAlchemy()
 
@@ -64,6 +65,10 @@ class Sensor(db.Model):
         self.address1w = address1w
         self.name = name
 
+    @hybrid_property
+    def value(self):
+        return get_sensor_value(self.address1w)
+
 class SensorValue(db.Model):
     __tablename__ = 'sensorValue'
     id = db.Column(db.Integer, primary_key=True)
@@ -119,6 +124,21 @@ class Rule(db.Model):
     def conditions(self):
         return self.conditions_sensorCompare + self.conditions_sensorDiffCompare + self.conditions_valueCompare
 
+    @hybrid_property
+    def fulfilled(self):
+        result = None
+        for condition in self.conditions:
+            if result is None:
+                result = condition.fulfilled
+            else:
+                if self.op == OPERATORS.and_:
+                    result = result and condition.fulfilled
+                elif self.op == OPERATORS.or_:
+                    result = result or condition.fulfilled
+                else:
+                    result = False # illegal rule
+        return result
+
 class RelayRules(db.Model):
     __tablename__ = 'relayRules'
     # Links relays with rules
@@ -149,6 +169,29 @@ class Condition_sensorCompare(db.Model):
             s2=Sensor.query.filter_by(id=self.sensor2).first().name
         )
 
+    @hybrid_property
+    def fulfilled(self):
+        sensor1 = Sensor.query.get(self.sensor1)
+        sensor2 = Sensor.query.get(self.sensor2)
+        if sensor1 is None or sensor2 is None:
+            return False
+        sensor1 = sensor1.value
+        sensor2 = sensor2.value
+
+        if self.relation == RELATIONS.lt:
+            return sensor1 < sensor2
+        elif self.relation == RELATIONS.leq:
+            return sensor1 <= sensor2
+        elif self.relation == RELATIONS.eq:
+            return sensor1 == sensor2
+        elif self.relation == RELATIONS.geq:
+            return sensor1 >= sensor2
+        elif self.relation == RELATIONS.gt:
+            return sensor1 > sensor2
+        else:
+            # invalid relation
+            return False
+
 class Condition_sensorDiffCompare(db.Model):
     __tablename__ = 'condition_sensorDiffCompare'
     # condition is true, if:
@@ -175,6 +218,30 @@ class Condition_sensorDiffCompare(db.Model):
             v=str(self.value)
         )
 
+    @hybrid_property
+    def fulfilled(self):
+        sensor1 = Sensor.query.get(self.sensor1)
+        sensor2 = Sensor.query.get(self.sensor2)
+        if sensor1 is None or sensor2 is None:
+            return False
+        sensor1 = sensor1.value
+        sensor2 = sensor2.value
+        diff = sensor2 - sensor1
+
+        if self.relation == RELATIONS.lt:
+            return diff < self.value
+        elif self.relation == RELATIONS.leq:
+            return diff <= self.value
+        elif self.relation == RELATIONS.eq:
+            return diff == self.value
+        elif self.relation == RELATIONS.geq:
+            return diff >= self.value
+        elif self.relation == RELATIONS.gt:
+            return diff > self.value
+        else:
+            # invalid relation
+            return False
+
 class Condition_valueCompare(db.Model):
     __tablename__ = 'condition_valueCompare'
     # condtion is true, if:
@@ -197,3 +264,24 @@ class Condition_valueCompare(db.Model):
             op=str(self.relation),
             v=str(self.value)
         )
+
+    @hybrid_property
+    def fulfilled(self):
+        sensor = Sensor.query.get(self.sensor)
+        if sensor is None:
+            return False
+        sensor = sensor.value
+
+        if self.relation == RELATIONS.lt:
+            return sensor < self.value
+        elif self.relation == RELATIONS.leq:
+            return sensor <= self.value
+        elif self.relation == RELATIONS.eq:
+            return sensor == self.value
+        elif self.relation == RELATIONS.geq:
+            return sensor >= self.value
+        elif self.relation == RELATIONS.gt:
+            return sensor > self.value
+        else:
+            # invalid relation
+            return False
