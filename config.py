@@ -6,16 +6,16 @@ class Config:
 
 class Hardware:
     """ Configuration for connected Hardware """
-    # define GPIO-Pins of relays. {relay_nr: gpio_pin}
+    # define GPIO-Pins of relays. {relay_nr: GPIO_BCM}
     relays = {
-        1: 37,
-        2: 35,
-        3: 33,
-        4: 31,
-        5: 29,
-        6: 36,
-        7: 38,
-        8: 40
+        1: 26,
+        2: 19,
+        3: 13,
+        4: 6,
+        5: 5,
+        6: 16,
+        7: 20,
+        8: 21
     }
 
 class System:
