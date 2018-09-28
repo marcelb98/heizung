@@ -97,7 +97,7 @@ def relay(relayID):
         model.db.session.commit()
         flash('Rule linked successfully.')
 
-    rules = [model.Rule.query.get(rr.rule) for rr in model.RelayRules.query.all()]
+    rules = [model.Rule.query.get(rr.rule) for rr in model.RelayRules.query.filter_by(relay=relay.id).all()]
 
     return render_template('relay.html', relay=relay, form=form, rules=rules)
 
