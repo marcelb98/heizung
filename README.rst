@@ -1,5 +1,17 @@
 heizung
 =======
+heizung is a utility written in python/flask to control some relays
+connected to an Raspberry Pi dependent on current temperatures of one
+or multiple sensors.
+
+The rules (when a specific relay will be switched on) can base
+on multiple conditions linked with logical and or logical or.
+The conditions can be:
+
+- compare the temperatures of two sensors
+- compare the difference of the temperatures of two sensors with a specific value
+- compare the temperature of a sensor with a specific value
+
 Installation
 ------------
 Installing heizung on your Raspi is quite easy.
