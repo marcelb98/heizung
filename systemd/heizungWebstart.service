@@ -1,0 +1,7 @@
+[Unit]
+Description=Start heizung webUI
+
+[Service]
+WorkingDirectory=/opt/heizung
+Environment="PYTHONPATH=./"
+ExecStart=waitress-serve --port=80 --call 'app:get_app'

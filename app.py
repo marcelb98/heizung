@@ -218,6 +218,9 @@ def user_administration():
 def logout():
     return "logout"
 
+def get_app():
+    global app
+    return app
 
 if __name__ == '__main__':
     app.run()

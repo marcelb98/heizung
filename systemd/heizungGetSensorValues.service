@@ -1,0 +1,6 @@
+[Unit]
+Description=Get values of sensors
+
+[Service]
+Environment="PYTHONPATH=/opt/heizung"
+ExecStart=/opt/heizung/venv/bin/python /opt/heizung/system/getSensorValues.py

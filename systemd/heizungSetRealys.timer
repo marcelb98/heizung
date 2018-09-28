@@ -1,0 +1,9 @@
+[Unit]
+Description=Set relays every minute
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1m
+
+[Install]
+WantedBy=timers.target

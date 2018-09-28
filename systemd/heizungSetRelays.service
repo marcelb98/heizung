@@ -1,0 +1,6 @@
+[Unit]
+Description=Set relays
+
+[Service]
+Environment="PYTHONPATH=/opt/heizung"
+ExecStart=/opt/heizung/venv/bin/python /opt/heizung/system/setRelays.py
