@@ -26,7 +26,7 @@ with app.app_context():
     model.db.init_app(app)
 
 def setup():
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     for port, pin in Hardware.relays.items():
         GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
