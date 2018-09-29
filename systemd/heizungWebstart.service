@@ -4,4 +4,7 @@ Description=Start heizung webUI
 [Service]
 WorkingDirectory=/opt/heizung
 Environment="PYTHONPATH=./"
-ExecStart=waitress-serve --port=80 --call 'app:get_app'
+ExecStart=/opt/heizung/venv/bin/waitress-serve --port=80 --call 'app:get_app'
+
+[Install]
+WantedBy=multi-user.target
