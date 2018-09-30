@@ -13,8 +13,11 @@ def get_sensor_value(w1addr):
     :return: Temperature in °C or False on read-error
     """
     data = ''
-    with open(System.dir_1w+'/'+w1addr+'/w1_slave') as f:
-        data = f.readlines()
+    try:
+        with open(System.dir_1w+'/'+w1addr+'/w1_slave') as f:
+            data = f.readlines()
+    except FileNotFoundError:
+        return False # temp sensor not connected
 
     if data[0].rstrip().split(" ")[11] != 'YES':
         # read-error
