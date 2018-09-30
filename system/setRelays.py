@@ -22,6 +22,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = Config.database_url
 app.app_context()
 app.app_context().push()
 
+relayON = GPIO.LOW
+relayOFF = GPIO.HIGH
+
 with app.app_context():
     model.db.init_app(app)
 
@@ -29,7 +32,7 @@ def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     for port, pin in Hardware.relays.items():
-        GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(pin, GPIO.OUT, initial=relayOFF)
 
 def get_relay_state(relay):
     # Determine if relay should be on (True) or off (False)
@@ -44,10 +47,10 @@ def set_relay(relay, state):
     gpiopin = Hardware.relays[relay.port]
     if state:
         print("Set gpio {} HIGH".format(gpiopin))
-        GPIO.output(gpiopin, GPIO.HIGH)
+        GPIO.output(gpiopin, relayON)
     else:
         print("Set gpio {} LOW".format(gpiopin))
-        GPIO.output(gpiopin, GPIO.LOW)
+        GPIO.output(gpiopin, relayOFF)
 
 if __name__ == '__main__':
     setup()
