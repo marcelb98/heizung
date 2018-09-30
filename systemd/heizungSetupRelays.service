@@ -1,0 +1,10 @@
+[Unit]
+Description=Initialize GPIOs for relays
+
+[Service]
+WorkingDirectory=/opt/heizung
+Environment="PYTHONPATH=./"
+ExecStart=/opt/heizung/venv/bin/python /opt/heizung/system/setupRelays.py
+
+[Install]
+WantedBy=multi-user.target

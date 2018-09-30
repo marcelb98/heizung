@@ -27,10 +27,12 @@ Just follow these simple steps:
 7. start and enable systemd:
     1. ``systemctl start heizungWebstart.service``
     2. ``systemctl enable heizungWebstart.service``
-    3. ``systemctl start heizungGetSensorValues.timer``
-    4. ``systemctl enable heizungGetSensorValues.timer``
-    5. ``systemctl start heizungSetRelays.timer``
-    6. ``systemctl enable heizungSetRelays.timer``
+    3. ``systemctl start heizungSetupRelays.service``
+    4. ``systemctl enable heizungSetupRelays.service``
+    5. ``systemctl start heizungGetSensorValues.timer``
+    6. ``systemctl enable heizungGetSensorValues.timer``
+    7. ``systemctl start heizungSetRelays.timer``
+    8. ``systemctl enable heizungSetRelays.timer``
 
 
 .. [1] You can also choose another directory, but you have to edit the systemd-services if you do so.

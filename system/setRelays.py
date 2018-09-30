@@ -32,7 +32,7 @@ def setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     for port, pin in Hardware.relays.items():
-        GPIO.setup(pin, GPIO.OUT, initial=relayOFF)
+        GPIO.setup(pin, GPIO.OUT)
 
 def get_relay_state(relay):
     # Determine if relay should be on (True) or off (False)
