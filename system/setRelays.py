@@ -12,7 +12,7 @@ from lib.hardware import get_sensor_value
 import model
 
 try:
-    from RPi.GPIO import GPIO
+    import RPi.GPIO as GPIO
 except ImportError:
     from GPIOEmulator.EmulatorGUI import GPIO
 
