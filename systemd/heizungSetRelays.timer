@@ -2,8 +2,8 @@
 Description=Set relays every minute
 
 [Timer]
-OnBootSec=1min
-OnUnitActiveSec=1m
+OnBootSec=30s
+OnUnitActiveSec=30s
 
 [Install]
 WantedBy=timers.target
