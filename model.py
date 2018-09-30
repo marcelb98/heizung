@@ -96,6 +96,10 @@ class Relay(db.Model):
     @hybrid_property
     def on(self):
         # return True if relay is on, False otherwise
+        relayrules = self.relayrules
+        for relayrule in relayrules:
+            if Rule.query.get(relayrule.rule).fulfilled:
+                return True
         return False
 
 class Rule(db.Model):

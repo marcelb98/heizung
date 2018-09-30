@@ -34,18 +34,10 @@ def setup():
     for port, pin in Hardware.relays.items():
         GPIO.setup(pin, GPIO.OUT)
 
-def get_relay_state(relay):
-    # Determine if relay should be on (True) or off (False)
-    relayrules = relay.relayrules
-    for relayrule in relayrules:
-        if model.Rule.query.get(relayrule.rule).fulfilled:
-            return True
-    return False
-
-def set_relay(relay, state):
+def set_relay(relay):
     # Set state of relay
     gpiopin = Hardware.relays[relay.port]
-    if state:
+    if relay.on:
         print("Set gpio {} HIGH".format(gpiopin))
         GPIO.output(gpiopin, relayON)
     else:
@@ -55,4 +47,4 @@ def set_relay(relay, state):
 if __name__ == '__main__':
     setup()
     for r in model.Relay.query.all():
-        set_relay(r, get_relay_state(r))
+        set_relay(r)
