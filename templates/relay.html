@@ -32,7 +32,8 @@
             This relay is active, if one of the following rules is true:
             <ul>
                 {% for rule in rules %}
-                    <li>{{ rule.name }}</li>
+                    <li>{{ rule.name }}
+                        <a href="{{ url_for('del_relay_rule',idRelay=relay.id,idRule=rule.id) }}"><i class="fa fa-trash"></i></a></li>
                 {% endfor %}
             </ul>
         </div>

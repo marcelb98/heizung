@@ -116,6 +116,16 @@ def new_relay():
 
     return render_template('new_relay.html', form=form)
 
+@app.route('/relay/<int:idRelay>/delRoute/<int:idRule>/')
+def del_relay_rule(idRelay, idRule):
+    rr = model.RelayRules.query.filter(
+        model.RelayRules.relay==idRelay,
+        model.RelayRules.rule==idRule
+    ).first()
+    model.db.session.delete(rr)
+    model.db.session.commit()
+    return redirect(url_for('relay', relayID=idRelay))
+
 @app.route('/rule/<int:ruleID>/')
 @with_navigation
 def rule(ruleID):
