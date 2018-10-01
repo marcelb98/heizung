@@ -60,4 +60,12 @@ You'll need:
 - female-female jumper wires
 - some resistors and cable
 
-*WIP*
+The wiring is quite easy:
+
+.. image:: https://raw.githubusercontent.com/marcelb98/heizung/master/doc/heizung.png
+
+To use more than one temperature sensor, just connect multiple of them in parallel.
+
+The flags marked with "R1", "R2", ..., "R8" have to be connected with the relay card.
+Maybe the relay card also needs GND and 5V.
+The resistors between RPi and the relay card are 1k.
