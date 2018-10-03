@@ -21,4 +21,39 @@
         </div>
     </div>
 
+    <br>
+
+    <div class="row">
+        <div class="col-md-12">
+
+          <!-- Chart -->
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+              <li class="pull-left header"><i class="fa fa-line-chart"></i> {{ sensor.name }}</li>
+            </ul>
+            <div class="tab-content no-padding">
+              <!-- Morris chart - Sales -->
+              <div class="chart tab-pane active" id="temp-chart" style="position: relative; height: 300px;"></div>
+            </div>
+          </div>
+          <!-- /Chart -->
+
+        </div>
+      </div>
+
+{% endblock %}
+{% block extraJS %}
+    <script type="text/javascript">
+    var area = new Morris.Area({
+    element   : 'temp-chart',
+    resize    : true,
+    data      : {{ tempdata | safe }},
+    xkey      : 'y',
+    ykeys     : ['item1', ],
+    labels    : ['Temperature', ],
+    lineColors: ['#a0d0e0', '#3c8dbc'],
+    hideHover : 'auto'
+    });
+
+    </script>
 {% endblock %}

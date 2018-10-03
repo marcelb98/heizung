@@ -1,7 +1,10 @@
+import datetime
+import json
 from functools import wraps
 
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_navigation import Navigation
+from sqlalchemy import and_
 
 import model
 from config import Config
@@ -66,7 +69,22 @@ def dashboard():
 def sensor(sensorID):
     sensor = model.Sensor.query.get(sensorID)
 
-    return render_template('sensor.html', sensor=sensor)
+    end = datetime.datetime.now()
+    start = end - datetime.timedelta(days=10,)
+    print(str(sensorID))
+    print(str(start))
+    print(str(end))
+
+    values = model.SensorValue.query.filter( and_(model.SensorValue.sensor_id==sensorID,
+                                                  model.SensorValue.time>=start,
+                                                  model.SensorValue.time<=end)).all()
+    data = []
+    print(values)
+    for v in values:
+        data.append({"y": v.time.strftime("%Y-%m-%d %H:%M:%S"), "item1": str(v.value)} )
+    jsontemps = json.dumps(data)
+
+    return render_template('sensor.html', sensor=sensor, tempdata=jsontemps)
 
 @app.route('/sensor/new', methods=['GET', 'POST'])
 @with_navigation

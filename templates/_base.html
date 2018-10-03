@@ -178,9 +178,8 @@
 <script src="{{ url_for('static', filename='AdminLTE/bower_components/fastclick/lib/fastclick.js') }}"></script>
 <!-- AdminLTE App -->
 <script src="{{ url_for('static', filename='AdminLTE/dist/js/adminlte.min.js') }}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{ url_for('static', filename='AdminLTE/dist/js/pages/dashboard.js') }}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{{ url_for('static', filename='AdminLTE/dist/js/demo.js') }}"></script>
+
+{% block extraJS %}
+{% endblock %}
 </body>
 </html>
