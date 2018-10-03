@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, FloatField
+from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, ValidationError
 
 from model import Relay, Sensor, Rule
@@ -66,3 +67,7 @@ class NewRuleForRelayForm(FlaskForm):
         rule = Rule.query.get(field.data)
         if rule is None:
             raise ValidationError("Rule not existent")
+
+class DateRangeSelectForm(FlaskForm):
+    start = DateTimeField('Start', validators=[DataRequired(message="No date given")])
+    end = DateTimeField('End', validators=[DataRequired(message="No date given")])

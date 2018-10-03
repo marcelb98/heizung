@@ -64,27 +64,28 @@ def dashboard():
     sensors = get_sensors()
     return render_template('dashboard.html', relays=relays, sensors=sensors)
 
-@app.route('/sensor/<int:sensorID>/')
+@app.route('/sensor/<int:sensorID>/', methods=['GET', 'POST'])
 @with_navigation
 def sensor(sensorID):
     sensor = model.Sensor.query.get(sensorID)
 
-    end = datetime.datetime.now()
-    start = end - datetime.timedelta(days=10,)
-    print(str(sensorID))
-    print(str(start))
-    print(str(end))
+    form = forms.DateRangeSelectForm(request.form)
+
+    if form.end.data is None:
+        form.end.data = datetime.datetime.now()
+    if form.start.data is None:
+        form.start.data = form.end.data - datetime.timedelta(days=10,)
 
     values = model.SensorValue.query.filter( and_(model.SensorValue.sensor_id==sensorID,
-                                                  model.SensorValue.time>=start,
-                                                  model.SensorValue.time<=end)).all()
+                                                  model.SensorValue.time>=form.start.data,
+                                                  model.SensorValue.time<=form.end.data)).all()
     data = []
     print(values)
     for v in values:
         data.append({"y": v.time.strftime("%Y-%m-%d %H:%M:%S"), "item1": str(v.value)} )
     jsontemps = json.dumps(data)
 
-    return render_template('sensor.html', sensor=sensor, tempdata=jsontemps)
+    return render_template('sensor.html', sensor=sensor, tempdata=jsontemps, form=form)
 
 @app.route('/sensor/<int:sensorID>/delete')
 @with_navigation
