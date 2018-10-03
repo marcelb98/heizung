@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, FloatField
 from wtforms.validators import DataRequired, ValidationError
 
-from model import Relay, Sensor
+from model import Relay, Sensor, Rule
 
 class NewSensorForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(message="No name given")])
@@ -62,3 +62,7 @@ class NewRuleForRelayForm(FlaskForm):
     rule = SelectField('Rule', validators=[DataRequired(message="No rule specified")], coerce=int)
 
     # verify rule
+    def validate_rule(form, field):
+        rule = Rule.query.get(field.data)
+        if rule is None:
+            raise ValidationError("Rule not existent")
