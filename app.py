@@ -4,7 +4,7 @@ from functools import wraps
 
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_navigation import Navigation
-from sqlalchemy import and_
+from sqlalchemy import and_, or_
 
 import model
 from config import Config
@@ -85,6 +85,22 @@ def sensor(sensorID):
     jsontemps = json.dumps(data)
 
     return render_template('sensor.html', sensor=sensor, tempdata=jsontemps)
+
+@app.route('/sensor/<int:sensorID>/delete')
+@with_navigation
+def del_sensor(sensorID):
+    model.SensorValue.query.filter_by(sensor_id=sensorID).delete()
+    model.Condition_sensorCompare.query.filter( or_(model.Condition_sensorCompare.sensor1==sensorID,
+                                                    model.Condition_sensorCompare.sensor2==sensorID)).delete()
+    model.Condition_sensorDiffCompare.query.filter(or_(model.Condition_sensorDiffCompare.sensor1 == sensorID,
+                                                   model.Condition_sensorDiffCompare.sensor2 == sensorID)).delete()
+    model.Condition_valueCompare.query.filter_by(sensor=sensorID).delete()
+
+    model.Sensor.query.filter_by(id=sensorID).delete()
+    model.db.session.commit()
+    flash('Deletion successfull.')
+    return redirect(url_for('index'))
+    pass
 
 @app.route('/sensor/new', methods=['GET', 'POST'])
 @with_navigation

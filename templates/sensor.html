@@ -17,7 +17,7 @@
             <b>Current value:</b> {{ sensor.value }}&deg;C
         </div>
         <div class="col-md-1">
-            <a href="#" class="btn btn-danger" disabled title="Not implemented yet"><i class="fa fa-trash"></i> Delete sensor</a><br>
+            <a href="{{ url_for('del_sensor', sensorID=sensor.id) }}" class="btn btn-danger" title="delete sensor"><i class="fa fa-trash"></i> Delete sensor</a><br>
         </div>
     </div>
 
