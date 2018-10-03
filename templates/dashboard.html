@@ -30,6 +30,23 @@
 
         <!-- ./col -->
       </div>
+
+      <div class="row">
+
+        {% for sensor in sensors %}
+            <div class="col-lg-3 col-xs-6">
+                <div class="small-box bg-blue">
+                    <div class="inner">
+                        <h3>{{ sensor.value }}&deg;C</h3>
+                        <p>{{ sensor.name }}</p>
+                    </div>
+                    <a href="{{ url_for('sensor', sensorID=sensor.id) }}" class="small-box-footer">Detail <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- ./col -->
+      </div>
       <!-- /.row -->
       <!-- Main row -->
       <div class="row">

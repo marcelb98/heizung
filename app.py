@@ -58,7 +58,8 @@ def index():
 @with_navigation
 def dashboard():
     relays = get_relays()
-    return render_template('dashboard.html', relays=relays)
+    sensors = get_sensors()
+    return render_template('dashboard.html', relays=relays, sensors=sensors)
 
 @app.route('/sensor/<int:sensorID>/')
 @with_navigation
