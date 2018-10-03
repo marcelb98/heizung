@@ -46,6 +46,10 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     passwort = db.Column(db.String)
 
+    def __init__(self, username, password):
+        self.username = username
+        self.setPassword(password)
+
     def setPassword(self, password):
         self.passwort = generate_password_hash(password)
 

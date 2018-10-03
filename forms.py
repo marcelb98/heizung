@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, FloatField
+from wtforms import StringField, SelectField, FloatField, PasswordField
 from wtforms.fields.html5 import DateTimeField
 from wtforms.validators import DataRequired, ValidationError
 
-from model import Relay, Sensor, Rule
+from model import Relay, Sensor, Rule, User
 
 class NewSensorForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(message="No name given")])
@@ -71,3 +71,12 @@ class NewRuleForRelayForm(FlaskForm):
 class DateRangeSelectForm(FlaskForm):
     start = DateTimeField('Start', validators=[DataRequired(message="No date given")])
     end = DateTimeField('End', validators=[DataRequired(message="No date given")])
+
+class CreateUserForm(FlaskForm):
+    name = StringField('Username', validators=[DataRequired("No name given")])
+    password = PasswordField('Password', validators=[DataRequired("No password given")])
+
+    def validate_name(form, field):
+        u = User.query.filter_by(username=field.data).first()
+        if u is not None:
+            raise ValidationError("Username already in use.")

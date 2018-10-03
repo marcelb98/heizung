@@ -267,7 +267,22 @@ def delete_rule(ruleID):
 @app.route('/admin/users/')
 @with_navigation
 def user_administration():
-    return "user administration"
+    user = model.User.query.all()
+
+    return render_template('user.html', user=user)
+
+@app.route('/admin/users/new/', methods=['GET', 'POST'])
+@with_navigation
+def new_user():
+    form = forms.CreateUserForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        user = model.User(form.name.data, form.password.data)
+        model.db.session.add(user)
+        model.db.session.commit()
+        flash('User successfully created.')
+
+    return render_template('new_user.html', form=form)
 
 @app.route('/logout/')
 def logout():

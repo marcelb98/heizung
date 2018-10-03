@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+{% set title='New User' %}
+{% set heading='Create new User' %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>User administration</li>
+        <li class="active">New user</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.name.label }}
+            {% if form.name.errors %}<br><span class="text-danger">{{ form.name.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.name(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            {{ form.password.label }}
+            {% if form.password.errors %}<br><span class="text-danger">{{ form.password.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.password(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}
