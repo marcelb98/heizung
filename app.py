@@ -214,6 +214,7 @@ def new_value_compare_condition(ruleID):
 
 @app.route('/rule/<int:ruleID>/delete', methods=['GET', 'POST'])
 def delete_rule(ruleID):
+    model.RelayRules.query.filter_by(rule=ruleID).delete()
     rule = model.Rule.query.get(ruleID)
     model.db.session.delete(rule)
     model.db.session.commit()
