@@ -38,7 +38,7 @@
             </ul>
         </div>
         <div class="col-md-1">
-            <a href="#" class="btn btn-danger" disabled title="Not implemented yet"><i class="fa fa-trash"></i> Delete relay</a><br>
+            <a href="{{ url_for('del_relay', relayID=relay.id) }}" class="btn btn-danger" title="delete relay"><i class="fa fa-trash"></i> Delete relay</a><br>
         </div>
     </div>
 

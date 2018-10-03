@@ -100,7 +100,6 @@ def del_sensor(sensorID):
     model.db.session.commit()
     flash('Deletion successfull.')
     return redirect(url_for('index'))
-    pass
 
 @app.route('/sensor/new', methods=['GET', 'POST'])
 @with_navigation
@@ -135,6 +134,15 @@ def relay(relayID):
     rules = [model.Rule.query.get(rr.rule) for rr in model.RelayRules.query.filter_by(relay=relay.id).all()]
 
     return render_template('relay.html', relay=relay, form=form, rules=rules)
+
+@app.route('/relay/<int:relayID>/delete')
+@with_navigation
+def del_relay(relayID):
+    model.RelayRules.query.filter_by(relay=relayID).delete()
+    model.Relay.query.filter_by(id=relayID).delete()
+    model.db.session.commit()
+    flash('Deletion successfull.')
+    return redirect(url_for('index'))
 
 @app.route('/relay/new', methods=['GET', 'POST'])
 @with_navigation
