@@ -1,13 +1,13 @@
 {% extends "_base.html" %}
-{% set title='New condition' %}
-{% set heading='Create new condition' %}
+{% set title='value condition' %}
+{% if edit == True%}{% set heading='Edit condition' %}{% else %}{% set heading='New condition'%}{% endif %}
 
 {% block breadcumb %}
     <ol class="breadcrumb">
         <li>Home</li>
         <li>Rules</li>
         <li>{{ rule.name }}</li>
-        <li class="active">New condition</li>
+        <li class="active">{{ heading }}</li>
     </ol>
 {% endblock %}
 
@@ -41,7 +41,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">{% if edit == True %}Save{% else %}Create{% endif %}</button>
         </div>
     </div>
     </form>

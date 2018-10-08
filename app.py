@@ -264,6 +264,41 @@ def delete_rule(ruleID):
     model.db.session.commit()
     return redirect(url_for('index'))
 
+@app.route('/rule/<int:ruleID>/edit/vcCondition/<int:conditionID>/', methods=['GET', 'POST'])
+@with_navigation
+def edit_valueCompareCondition(ruleID, conditionID):
+    rule = model.Rule.query.get(ruleID)
+    vc = model.Condition_valueCompare.query.get(conditionID)
+
+    form = forms.NewValueConditionForm(request.form)
+    form.sensor.choices = [(s.id, s.name) for s in model.Sensor.query.all()]
+    form.relation.choices = [(r.value, str(r)) for r in model.RELATIONS]
+    if form.sensor.data is None: form.sensor.data = vc.sensor
+    if form.relation.data is None: form.relation.data = vc.relation.value
+    if form.value.data == 0: form.value.data = vc.value
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        form.relation.data = model.RELATIONS(form.relation.data)
+        vc.sensor = form.sensor.data
+        vc.relation = form.relation.data
+        vc.value = form.value.data
+        model.db.session.commit()
+        flash('Condition updated successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_valueCondition.html', rule=rule, form=form, edit=True)
+
+@app.route('/rule/<int:ruleID>/edit/sdCondition/<int:conditionID>/')
+@with_navigation
+def edit_sensorDiffCompareCondition(ruleID, conditionID):
+    return "sensorDiffcondition"
+
+@app.route('/rule/<int:ruleID>/edit/scCondition/<int:conditionID>/')
+@with_navigation
+def edit_sensorCompareCondition(ruleID, conditionID):
+    return "sensorCompareCondition"
+
 @app.route('/admin/users/')
 @with_navigation
 def user_administration():

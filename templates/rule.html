@@ -24,7 +24,15 @@
             {% if rule.conditions %}
                 <ul>
                 {% for condition in rule.conditions %}
-                    <li class="{{ 'text-success' if condition.fulfilled else 'text-danger' }}">{% if loop.index > 1 %}<b>{{ rule.op}}</b> {% endif %}{{ condition }}</li>
+                    <li class="{{ 'text-success' if condition.fulfilled else 'text-danger' }}">{% if loop.index > 1 %}<b>{{ rule.op}}</b> {% endif %}{{ condition }}
+                        {% if condition.__tablename__ == 'condition_valueCompare' %}
+                            <a href="{{ url_for('edit_valueCompareCondition', ruleID=rule.id, conditionID=condition.id) }}"><i class="fa fa-edit"></i></a>
+                        {% elif condition.__tablename__ == 'condition_sensorDiffCompare' %}
+                            <a href="{{ url_for('edit_sensorDiffCompareCondition', ruleID=rule.id, conditionID=condition.id) }}"><i class="fa fa-edit"></i></a>
+                        {% elif condition.__tablename__ == 'condition_sensorCompare' %}
+                            <a href="{{ url_for('edit_sensorCompareCondition', ruleID=rule.id, conditionID=condition.id) }}"><i class="fa fa-edit"></i></a>
+                        {% endif %}
+                    </li>
                 {% endfor %}
                 </ul>
             {% else %}
