@@ -10,6 +10,8 @@ import model
 from config import Config
 import forms
 
+from flask_migrate import Migrate
+
 from lib.sensors import get_sensors, get_unused_1waddresses
 from lib.relays import get_relays, get_unused_ports, get_unused_rules_for_relay
 from lib.rules import get_rules
@@ -26,6 +28,8 @@ app.app_context().push()
 
 with app.app_context():
     model.db.init_app(app)
+
+migrate = Migrate(app, model.db)
 
 nav = Navigation(app)
 def gen_nav():
