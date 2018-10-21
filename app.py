@@ -78,7 +78,7 @@ def sensor(sensorID):
     if form.end.data is None:
         form.end.data = datetime.datetime.now()
     if form.start.data is None:
-        form.start.data = form.end.data - datetime.timedelta(days=10,)
+        form.start.data = form.end.data - datetime.timedelta(days=3,)
 
     values = model.SensorValue.query.filter( and_(model.SensorValue.sensor_id==sensorID,
                                                   model.SensorValue.time>=form.start.data,
