@@ -119,6 +119,7 @@ class Rule(db.Model):
     conditions_sensorCompare = db.relationship("Condition_sensorCompare")
     conditions_sensorDiffCompare = db.relation("Condition_sensorDiffCompare")
     conditions_valueCompare = db.relationship("Condition_valueCompare")
+    conditions_timeCompare = db.relationship("Condition_timeCompare")
 
     childs = db.relationship('Rule') # rules which act as condition for this rule
 
@@ -130,7 +131,7 @@ class Rule(db.Model):
 
     @hybrid_property
     def conditions(self):
-        return self.conditions_sensorCompare + self.conditions_sensorDiffCompare + self.conditions_valueCompare
+        return self.conditions_sensorCompare + self.conditions_sensorDiffCompare + self.conditions_valueCompare + self.conditions_timeCompare
 
     @hybrid_property
     def fulfilled(self):
@@ -297,3 +298,28 @@ class Condition_valueCompare(db.Model):
         else:
             # invalid relation
             return False
+
+class Condition_timeCompare(db.Model):
+    __tablename__ = 'condition_timeCompare'
+    # condtion is true, if:
+    # start_time <= current_time <= end_time
+    id = db.Column(db.Integer, primary_key=True)
+    rule = db.Column(db.Integer, db.ForeignKey('rule.id'))
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+
+    def __init__(self, rule, start_time, end_time):
+        self.rule = rule
+        self.start_time = start_time
+        self.end_time = end_time
+
+    def __str__(self):
+        return '{t1} - {t2}'.format(
+            t1=str(self.start_time),
+            t2=str(self.end_time)
+        )
+
+    @hybrid_property
+    def fulfilled(self):
+        time = datetime.datetime.now().time()
+        return self.start_time <= time <= self.end_time

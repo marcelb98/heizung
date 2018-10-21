@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, FloatField, PasswordField
-from wtforms.fields.html5 import DateTimeField
+from wtforms.fields.html5 import DateTimeField, TimeField
 from wtforms.validators import DataRequired, ValidationError
 
 from model import Relay, Sensor, Rule, User
@@ -58,6 +58,10 @@ class NewValueConditionForm(FlaskForm):
     value = FloatField('Value', validators=[DataRequired(message="No value specified")], default=0)
 
     # verify sensor and relation
+
+class NewTimeConditionForm(FlaskForm):
+    start_time = TimeField('Start time', validators=[DataRequired(message="No time specified")])
+    end_time = TimeField('End time', validators=[DataRequired(message="No time specified")])
 
 class NewRuleForRelayForm(FlaskForm):
     rule = SelectField('Rule', validators=[DataRequired(message="No rule specified")], coerce=int)

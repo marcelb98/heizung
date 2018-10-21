@@ -260,6 +260,23 @@ def new_value_compare_condition(ruleID):
 
     return render_template('new_valueCondition.html', rule=rule, form=form)
 
+@app.route('/rule/<int:ruleID>/newTimeCondition', methods=['GET', 'POST'])
+@with_navigation
+def new_time_compare_condition(ruleID):
+    rule = model.Rule.query.get(ruleID)
+
+    form = forms.NewTimeConditionForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        # form sent with correct data
+        c = model.Condition_timeCompare(rule.id, form.start_time.data, form.end_time.data)
+        model.db.session.add(c)
+        model.db.session.commit()
+        flash('Condition created successfully.')
+        return redirect(url_for('rule', ruleID=rule.id))
+
+    return render_template('new_timeCondition.html', rule=rule, form=form)
+
 @app.route('/rule/<int:ruleID>/delete', methods=['GET', 'POST'])
 def delete_rule(ruleID):
     model.RelayRules.query.filter_by(rule=ruleID).delete()

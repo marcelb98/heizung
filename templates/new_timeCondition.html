@@ -1,0 +1,42 @@
+{% extends "_base.html" %}
+{% set title='value condition' %}
+{% if edit == True%}{% set heading='Edit condition' %}{% else %}{% set heading='New condition'%}{% endif %}
+
+{% block breadcumb %}
+    <ol class="breadcrumb">
+        <li>Home</li>
+        <li>Rules</li>
+        <li>{{ rule.name }}</li>
+        <li class="active">{{ heading }}</li>
+    </ol>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="post">
+    {{ form.csrf_token }}
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.start_time.label }}
+            {% if form.start_time.errors %}<br><span class="text-danger">{{ form.start_time.errors[0] }}</span>{% endif %}
+        </div>
+        <div class="col-md-4">
+            {{ form.end_time.label }}
+            {% if form.end_time.errors %}<br><span class="text-danger">{{ form.end_time.errors[0] }}</span>{% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            {{ form.start_time(class_="form-control") }}
+        </div>
+        <div class="col-md-4">
+            {{ form.end_time(class_="form-control") }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary">{% if edit == True %}Save{% else %}Create{% endif %}</button>
+        </div>
+    </div>
+    </form>
+
+{% endblock %}
