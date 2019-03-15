@@ -78,7 +78,13 @@ def sensor(sensorID):
     if form.end.data is None:
         form.end.data = datetime.datetime.now()
     if form.start.data is None:
-        form.start.data = form.end.data - datetime.timedelta(days=3,)
+        if request.args.get('interval') == '24h':
+            form.start.data = form.end.data - datetime.timedelta(hours=24, )
+        elif request.args.get('interval') == '3d':
+            form.start.data = form.end.data - datetime.timedelta(days=3, )
+        else:
+            form.start.data = form.end.data - datetime.timedelta(hours=12,)
+
 
     values = model.SensorValue.query.filter( and_(model.SensorValue.sensor_id==sensorID,
                                                   model.SensorValue.time>=form.start.data,
