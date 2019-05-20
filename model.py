@@ -1,4 +1,6 @@
 import datetime
+import random
+import string
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -59,6 +61,15 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+class RemoteSensor(db.Model):
+    __tablename__ = 'remotesensor'
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String, nullable=False)
+
+    def __init__(self):
+        # After creating this remote sensor, a new Sensor('rem-{RemoteSensor.id}', '{name}') has to be created
+        self.key = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(15))
+
 class Sensor(db.Model):
     __tablename__ = 'sensor'
     id = db.Column(db.Integer, primary_key=True)
@@ -70,8 +81,27 @@ class Sensor(db.Model):
         self.name = name
 
     @hybrid_property
+    def is_remote(self):
+        return self.address1w.startswith('rem-')
+
+    @hybrid_property
+    def remoteSensor(self):
+        # returns object of remote sensor, if this sensor is a remote sensor, otherwise None
+        if self.is_remote:
+            id = self.address1w[4:]
+            return RemoteSensor.query.get(id)
+        else:
+            return None
+
+    @hybrid_property
     def value(self):
-        return get_sensor_value(self.address1w)
+        if self.is_remote is True:
+            # sensor is a remote sensor, get last known value from db
+            value = SensorValue.query.filter_by(sensor_id=self.id).order_by(SensorValue.time.desc()).first()
+            return value.value if value is not None else False
+        else:
+            # sensor is connected 1w-sensor
+            return get_sensor_value(self.address1w)
 
 class SensorValue(db.Model):
     __tablename__ = 'sensorValue'

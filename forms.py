@@ -19,6 +19,14 @@ class NewSensorForm(FlaskForm):
         if sensors is not None:
             raise ValidationError("Sensor is already configured.")
 
+class NewRemoteSensorForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(message="No name given")])
+
+    def validate_name(form, field):
+        sensors = Sensor.query.filter_by(name=field.data).first()
+        if sensors is not None:
+            raise ValidationError("Name already in use.")
+
 class NewRelayForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(message="No name given")])
     port = SelectField('Port', validators=[DataRequired(message="No port specified")], coerce=int)

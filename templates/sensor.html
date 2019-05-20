@@ -58,6 +58,23 @@
         </div>
       </div>
 
+    {% if sensor.is_remote %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                This sensor is a remote sensor. Values are not meassured on this device but received with API calls.
+            </p>
+            <p>
+                <b>API Credentials:</b><br>
+                ID: <tt>{{ sensor.id }}</tt><br>
+                Key: <tt>{{ sensor.remoteSensor.key }}</tt><br>
+                Send HTTP-GET-Requests to: <tt>{{ url_for('api_remote_sensor_new_value',sensorID=sensor.id) }}?value={value}&signature={signature}</tt><br>
+                where {value} is the current temperature in &deg;C as a float and signature is the SHA256 hash of the value concatenated with the key.
+            </p>
+        </div>
+    </div>
+    {% endif %}
+
 {% endblock %}
 {% block extraJS %}
     <script type="text/javascript">

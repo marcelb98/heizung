@@ -1,8 +1,9 @@
 import datetime
+import hashlib
 import json
 from functools import wraps
 
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, abort
 from flask_navigation import Navigation
 from sqlalchemy import and_, or_
 
@@ -35,8 +36,8 @@ nav = Navigation(app)
 def gen_nav():
     nav.Bar('main', [
         nav.Item('Dashboard', 'dashboard'),
-        nav.Item('Sensors', 'index', items=[nav.Item(s.name, 'sensor', {'sensorID': s.id}) for s in get_sensors()]+
-            [nav.Item('+ new', 'new_sensor')]
+        nav.Item('Sensors', 'index', items=[nav.Item(s.name, 'sensor', {'sensorID': s.id}) for s in get_sensors()] +
+            [nav.Item('+ new', 'new_sensor'), nav.Item('+ new remote', 'new_remote_sensor')]
         ),
         nav.Item('Relays', 'index', items=[nav.Item(r.name, 'relay', {'relayID': r.id}) for r in get_relays()] +
             [nav.Item('+ new', 'new_relay')]
@@ -100,12 +101,17 @@ def sensor(sensorID):
 @app.route('/sensor/<int:sensorID>/delete')
 @with_navigation
 def del_sensor(sensorID):
+    sensor = model.Sensor.query.get(sensorID)
     model.SensorValue.query.filter_by(sensor_id=sensorID).delete()
     model.Condition_sensorCompare.query.filter( or_(model.Condition_sensorCompare.sensor1==sensorID,
                                                     model.Condition_sensorCompare.sensor2==sensorID)).delete()
     model.Condition_sensorDiffCompare.query.filter(or_(model.Condition_sensorDiffCompare.sensor1 == sensorID,
                                                    model.Condition_sensorDiffCompare.sensor2 == sensorID)).delete()
     model.Condition_valueCompare.query.filter_by(sensor=sensorID).delete()
+
+    if sensor.is_remote:
+        id = sensor.address1w[4:]
+        model.RemoteSensor.query.filter_by(id=id).delete()
 
     model.Sensor.query.filter_by(id=sensorID).delete()
     model.db.session.commit()
@@ -126,6 +132,22 @@ def new_sensor():
         flash('Sensor created successfully.')
 
     return render_template('new_sensor.html', form=form)
+
+@app.route('/sensor/new_remote', methods=['GET', 'POST'])
+@with_navigation
+def new_remote_sensor():
+    form = forms.NewRemoteSensorForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        rem_sensor = model.RemoteSensor()
+        model.db.session.add(rem_sensor)
+        model.db.session.flush()
+        sensor = model.Sensor('rem-{}'.format(rem_sensor.id), form.name.data)
+        model.db.session.add(sensor)
+        model.db.session.commit()
+        flash('Sensor created successfully.')
+
+    return render_template('new_remote_sensor.html', form=form)
 
 @app.route('/relay/<int:relayID>/', methods=['GET', 'POST'])
 @with_navigation
@@ -345,6 +367,40 @@ def new_user():
         flash('User successfully created.')
 
     return render_template('new_user.html', form=form)
+
+@app.route('/api/remotesensor/<int:sensorID>', methods=['GET'])
+def api_remote_sensor_new_value(sensorID):
+    sensor = model.Sensor.query.get(sensorID)
+
+    signature = request.args.get("signature","")
+    value = request.args.get("value","")
+
+    if sensor.is_remote:
+        addr = sensor.address1w[4:]
+        remote_sensor = model.RemoteSensor.query.get(addr)
+
+        # check if value is float
+        try:
+            float(value)
+        except ValueError:
+            return abort(400)
+
+        # check signature
+        s = remote_sensor.key + value
+        s = hashlib.sha256(s.encode()).hexdigest()
+
+        if s != signature:
+            # signature was wrong
+            return abort(403)
+
+        # save value
+        sv = model.SensorValue(sensor, float(value))
+        model.db.session.add(sv)
+        model.db.session.commit()
+
+        return "OK"
+    else:
+        return abort(400)
 
 @app.route('/logout/')
 def logout():
